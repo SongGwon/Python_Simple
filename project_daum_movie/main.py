@@ -15,6 +15,7 @@
 #   - URL: https://sites.google.com/chromium.org/driver/
 #  2.실시간(코드) 다운로드
 
+from db.movie_dao import add_review
 from datetime import datetime, timedelta
 import math
 import re
@@ -73,6 +74,7 @@ click_cnt = math.ceil((num_review - 10) / 30)
 for i in range(click_cnt):
     # "평점 더보기" 클릭
     driver.find_element(By.CLASS_NAME, "link_fold").click()
+    time.sleep(1)
 
 # 8.전체 소스코드 가져오기
 doc_html = driver.page_source
@@ -109,6 +111,15 @@ for item in review_list:
 
     print(f"  - 날짜: {review_date}")
 
+    # MariaDB 저장(제목, 리뷰, 평점, 작성자, 작성일자)
+    data = {
+        "title": movie_title,
+        "review": review_content,
+        "score": review_score,
+        "writer": review_writer,
+        "reg_date": review_date
+    }
+    add_review(data)
 
 
 
